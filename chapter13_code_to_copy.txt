@@ -1,0 +1,338 @@
+Project Step 13.1:
+@Test
+fun notInDictionaryTest() {
+    val path = Paths.get("src/test/resources/books/FiveWords.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+
+}
+
+After Project Step 13.1:
+package pfb.words.test
+
+import org.junit.Assert
+import org.junit.Test
+import pfb.words.Dictionary
+import pfb.words.WordChecker
+import java.nio.file.Paths
+
+class WordCheckerTest {
+    @Test
+    fun notInDictionaryTest() {
+        val path = Paths.get("src/test/resources/books/FiveWords.txt")
+        val dictionary = Dictionary(path)
+        val checker = WordChecker(dictionary)
+        Assert.assertFalse(checker.isPreviouslyUnseenValidWord("aardworlff"))
+    }
+}
+
+Project Step 13.2:
+@Test
+fun validWordTest() {
+    val path = Paths.get("src/test/resources/books/FiveWords.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+
+}
+
+Project Step 13.4:
+@Test
+fun testEmpty() {
+    val path = Paths.get("src/test/resources/books/abcd.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+    val wordNode = WordNode("")
+
+}
+
+Project Step 13.5:
+@Test
+fun testOneLetterWord() {
+    val path = Paths.get("src/test/resources/books/abcd.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+    val nodeA = WordNode("a")
+    val generated = nodeA.variantsByOneLetter(checker)
+
+}
+
+Project Step 13.7:
+package pfb.words
+
+/**
+ * Generates one-letter variants of a word.
+ */
+data class WordNode(val text: String) {
+    fun variantsByOneLetter(checker: WordChecker): List<WordNode> {
+        val result = mutableListOf<WordNode>()
+        return result
+    }
+}
+
+Project Step 13.8:
+private fun addVariantsAtPosition(position: Int, nodes: MutableList<WordNode>, checker: WordChecker) {
+    val textBeforePosition = text.substring(0, position)
+    val textAfterPosition = if (text.length > 1) text.substring(position + 1, text.length) else ""
+    val originalLetter = text[position]
+    for (fromAlphabet in "abcdefghijklmnopqrstuvwxyz") {
+        if (originalLetter != fromAlphabet) {
+            val variant = textBeforePosition + fromAlphabet + textAfterPosition
+            if (checker.isPreviouslyUnseenValidWord(variant)) {
+                nodes.add(WordNode(variant))
+            }
+        }
+    }
+}
+
+Project Step 13.9:
+@Test
+fun noPathDifferentLengths() {
+    val path = Paths.get("src/test/resources/books/abcd.txt")
+    val dictionary = Dictionary(path)
+    val wordSwitch = WordSwitch(dictionary, "ab", "abc")
+    Assert.assertNull(wordSwitch.lookForTarget())
+}
+
+@Test
+fun noPathTargetNotInDictionary() {
+    val path = Paths.get("src/test/resources/books/abcd.txt")
+    val dictionary = Dictionary(path)
+    val wordSwitch = WordSwitch(dictionary, "aa", "ae")
+    Assert.assertNull(wordSwitch.lookForTarget())
+}
+
+Project Step 13.14:
+fun lookForTarget(): WordNode? {
+    //Declare a variable to hold the new words that get created
+    //in each generation. Initialise it with the words generated
+    //by the start word.
+    var currentGeneration = startNode.variantsByOneLetter(checker)
+    //Have a loop to create new generations so long as these
+    //contain new words and the target is not found.
+    var targetNode: WordNode? = null
+    while (currentGeneration.isNotEmpty() && targetNode == null) {
+        //Create a val to hold the words that will be generated.
+        val nextGeneration = mutableListOf<WordNode>()
+        //For each word in the current generation...
+        for (wordNode in currentGeneration) {
+            //...check to see if it is the target...
+            if (wordNode.text == target) {
+                targetNode = wordNode
+            }
+            //...and generate all new words from it.
+            nextGeneration.addAll(wordNode.variantsByOneLetter(checker))
+        }
+        //Having dealt with the current generation,
+        //replace it by the words it generated.
+        currentGeneration = nextGeneration
+    }
+    return targetNode
+}
+
+Before Project Step 13.16:
+@Test
+fun testOneLetterWord() {
+    val path = Paths.get("src/test/resources/books/abcd.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+    val nodeA = WordNode("a")
+    val generated = nodeA.variantsByOneLetter(checker)
+    Assert.assertEquals(3, generated.size.toLong())
+    Assert.assertTrue(generated.contains(WordNode("b")))
+    Assert.assertTrue(generated.contains(WordNode("c")))
+    Assert.assertTrue(generated.contains(WordNode("d")))
+}
+
+Project Step 13.16:
+Assert.assertTrue(generated.contains(WordNode("b", nodeA)))
+Assert.assertTrue(generated.contains(WordNode("c", nodeA)))
+Assert.assertTrue(generated.contains(WordNode("d", nodeA)))
+
+Project Step 13.18:
+fun rootPath() : List<WordNode> {
+    val result = mutableListOf<WordNode>()
+    return result
+}
+
+Project Step 13.19:
+@Test
+fun testPathFromRootWithNullParent() {
+    val a = WordNode("a", null)
+    val path = a.rootPath()
+    Assert.assertEquals(1, path.size.toLong())
+    Assert.assertEquals(a, path.get(0))
+}
+
+Project Step 13.20:
+@Test
+fun testPathFromRootLengthTwo() {
+    val a = WordNode("a", null)
+    val b = WordNode("b", a)
+    val path = b.rootPath()
+    Assert.assertEquals(2, path.size.toLong())
+    Assert.assertEquals(a, path.get(0))
+    Assert.assertEquals(b, path.get(1))
+}
+
+Before Project Step 13.22:
+fun rootPath() : List<WordNode> {
+    val result = mutableListOf<WordNode>()
+    if (parent != null) {
+        val parentRootPath = parent.rootPath()
+        result.addAll(parentRootPath)
+    }
+    result.add(this)
+    return result
+}
+
+Before Project Step 13.23:
+fun main() {
+    //Load the dictionary.
+    val path = Paths.get("src/main/resources/books/english.txt")
+    val dictionary = Dictionary(path)
+    //Create a WordSwitch to look for a path from "swine" to "whale".
+    val wordSwitch = WordSwitch(dictionary, "swine", "whale")
+    //Calculate the target node.
+    val target = wordSwitch.lookForTarget()
+    if (target == null) {
+        //If the target is null, print out that the word
+        //could not be reached.
+        println("Could not reach target.")
+    } else {
+        //Else retrieve the path from the root to the
+        //target and print it out.
+        val fromRoot = target.rootPath()
+        for (wordNode in fromRoot) {
+            println(wordNode.text)
+        }
+    }
+}
+
+Solution to Project Step 13.2:
+@Test
+fun validWordTest() {
+    val path = Paths.get("src/test/resources/books/FiveWords.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+    Assert.assertTrue(checker.isPreviouslyUnseenValidWord("bat"))
+    Assert.assertFalse(checker.isPreviouslyUnseenValidWord("bat"))
+}
+
+Solution to Project Step 13.3:
+fun isPreviouslyUnseenValidWord(string: String): Boolean {
+    if (!dictionary.contains(string)) {
+        return false
+    }
+    if (wordsSoFar.contains(string)) {
+        return false
+    }
+    wordsSoFar.add(string)
+    return true
+}
+
+Solution to Project Step 13.4:
+@Test
+fun testEmpty() {
+    val path = Paths.get("src/test/resources/books/abcd.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+    val wordNode = WordNode("")
+    Assert.assertTrue(wordNode.variantsByOneLetter(checker).isEmpty())
+}
+
+Solution to Project Step 13.5:
+@Test
+fun testOneLetterWord() {
+    val path = Paths.get("src/test/resources/books/abcd.txt")
+    val dictionary = Dictionary(path)
+    val checker = WordChecker(dictionary)
+    val nodeA = WordNode("a")
+    val generated = nodeA.variantsByOneLetter(checker)
+    Assert.assertEquals(3, generated.size.toLong())
+    Assert.assertTrue(generated.contains(WordNode("b")))
+    Assert.assertTrue(generated.contains(WordNode("c")))
+    Assert.assertTrue(generated.contains(WordNode("d")))
+}
+
+Solution to Project Step 13.6:
+@Test
+fun testTwoLetterWord() {
+    val checker = wordChecker()
+    val nodeAB = WordNode("ab")
+    val generated = nodeAB.variantsByOneLetter(checker)
+    Assert.assertEquals(6, generated.size.toLong())
+    Assert.assertTrue(generated.contains(WordNode("aa")))
+    Assert.assertTrue(generated.contains(WordNode("ac")))
+    Assert.assertTrue(generated.contains(WordNode("ad")))
+    Assert.assertTrue(generated.contains(WordNode("bb")))
+    Assert.assertTrue(generated.contains(WordNode("cb")))
+    Assert.assertTrue(generated.contains(WordNode("db")))
+}
+
+
+Solution to Project Step 13.10:
+class WordSwitchTest {
+    @Test
+    fun noPathDifferentLengths() {
+        val dictionary = dictionary()
+        val wordSwitch = WordSwitch(dictionary, "ab", "abc")
+        Assert.assertNull(wordSwitch.lookForTarget())
+    }
+    
+    @Test
+    fun noPathTargetNotInDictionary() {
+        val dictionary = dictionary()
+        val wordSwitch = WordSwitch(dictionary, "aa", "ae")
+        Assert.assertNull(wordSwitch.lookForTarget())
+    }
+
+    private fun dictionary(): Dictionary {
+        val path = Paths.get("src/test/resources/books/abcd.txt")
+        val dictionary = Dictionary(path)
+        return dictionary
+    }
+}
+
+Solution to Project Step 13.12:
+@Test
+fun a_to_b() {
+    val wordSwitch = WordSwitch(dictionary(), "a", "b")
+    val result = wordSwitch.lookForTarget()
+    Assert.assertEquals("b", result!!.text)
+}
+
+Solution to Project Step 13.13:
+@Test
+fun ab_to_ba() {
+    val wordSwitch = WordSwitch(dictionary(), "ab", "ba")
+    val result = wordSwitch.lookForTarget()
+    Assert.assertEquals("ba", result!!.text)
+}
+
+Solution to Project Step 13.16:
+@Test
+fun testTwoLetterWord() {
+    val checker = wordChecker()
+    val nodeAB = WordNode("ab")
+    val generated = nodeAB.variantsByOneLetter(checker)
+    Assert.assertEquals(6, generated.size.toLong())
+    Assert.assertTrue(generated.contains(WordNode("aa", nodeAB)))
+    Assert.assertTrue(generated.contains(WordNode("ac", nodeAB)))
+    Assert.assertTrue(generated.contains(WordNode("ad", nodeAB)))
+    Assert.assertTrue(generated.contains(WordNode("bb", nodeAB)))
+    Assert.assertTrue(generated.contains(WordNode("cb", nodeAB)))
+    Assert.assertTrue(generated.contains(WordNode("db", nodeAB)))
+}
+
+Solution to Project Step 13.21:
+@Test
+fun testPathFromRootLengthThree() {
+    val a = WordNode("a", null)
+    val b = WordNode("b", a)
+    val c = WordNode("c", b)
+    val path = c.rootPath()
+    Assert.assertEquals(3, path.size.toLong())
+    Assert.assertEquals(a, path.get(0))
+    Assert.assertEquals(b, path.get(1))
+    Assert.assertEquals(c, path.get(2))
+}
