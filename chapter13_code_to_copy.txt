@@ -159,7 +159,7 @@ Project Step 13.19:
 fun testPathFromRootWithNullParent() {
     val a = WordNode("a", null)
     val path = a.rootPath()
-    Assert.assertEquals(1, path.size.toLong())
+    Assert.assertEquals(1, path.size)
     Assert.assertEquals(a, path.get(0))
 }
 
@@ -169,7 +169,7 @@ fun testPathFromRootLengthTwo() {
     val a = WordNode("a", null)
     val b = WordNode("b", a)
     val path = b.rootPath()
-    Assert.assertEquals(2, path.size.toLong())
+    Assert.assertEquals(2, path.size)
     Assert.assertEquals(a, path.get(0))
     Assert.assertEquals(b, path.get(1))
 }
@@ -331,7 +331,7 @@ fun testPathFromRootLengthThree() {
     val b = WordNode("b", a)
     val c = WordNode("c", b)
     val path = c.rootPath()
-    Assert.assertEquals(3, path.size.toLong())
+    Assert.assertEquals(3, path.size)
     Assert.assertEquals(a, path.get(0))
     Assert.assertEquals(b, path.get(1))
     Assert.assertEquals(c, path.get(2))
