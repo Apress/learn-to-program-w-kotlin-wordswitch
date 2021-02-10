@@ -57,17 +57,17 @@ fun testOneLetterWord() {
 }
 
 Project Step 13.7:
-package lpk.words
+fun variantsByOneLetter(checker: WordChecker): List<WordNode> {
+    val result = mutableListOf<WordNode>()
+    //For each position in the word...
+    for (i in 0..text.length - 1) {
+        //...add the variants made by changing
+        //just the letter at that position.
 
-/**
- * Generates one-letter variants of a word.
- */
-data class WordNode(val text: String) {
-    fun variantsByOneLetter(checker: WordChecker): List<WordNode> {
-        val result = mutableListOf<WordNode>()
-        return result
     }
+    return result
 }
+
 
 Project Step 13.8:
 private fun addVariantsAtPosition(position: Int, nodes: MutableList<WordNode>, checker: WordChecker) {
