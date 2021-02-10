@@ -8,12 +8,12 @@ fun notInDictionaryTest() {
 }
 
 After Project Step 13.1:
-package pfb.words.test
+package lpk.words.test
 
 import org.junit.Assert
 import org.junit.Test
-import pfb.words.Dictionary
-import pfb.words.WordChecker
+import lpk.words.Dictionary
+import lpk.words.WordChecker
 import java.nio.file.Paths
 
 class WordCheckerTest {
@@ -57,7 +57,7 @@ fun testOneLetterWord() {
 }
 
 Project Step 13.7:
-package pfb.words
+package lpk.words
 
 /**
  * Generates one-letter variants of a word.
