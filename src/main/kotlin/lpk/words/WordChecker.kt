@@ -6,9 +6,9 @@ package lpk.words
  */
 class WordChecker(val dictionary: Dictionary) {
 
-    val wordsSoFar = mutableSetOf<String>();
+    val wordsSoFar = mutableSetOf<String>()
 
     fun isPreviouslyUnseenValidWord(string: String): Boolean {
-        return false;
+        return false
     }
 }
